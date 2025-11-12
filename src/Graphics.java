@@ -2,9 +2,11 @@
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 /*
@@ -19,7 +21,8 @@ import java.awt.image.BufferedImage;
  * @author LWJGL2
  */
 public class Graphics {
-  public static final int HCENTER = 1;
+
+    public static final int HCENTER = 1;
     public static final int VCENTER = 2;
     public static final int LEFT = 4;
     public static final int RIGHT = 8;
@@ -34,14 +37,14 @@ public class Graphics {
     private Font meFont;
     private int selectedStroke = SOLID;
     private int translateX = 0, translateY = 0;
-    
+
     public int globalX, globalY;
 
     private Rectangle clip = new Rectangle(0, 0, 240, 320);
     private Color color;
 
     public Graphics(Graphics2D graphics2D) {
-        this.graphics2D=graphics2D;
+        this.graphics2D = graphics2D;
         this.color = Color.BLACK;
     }
 
@@ -50,7 +53,7 @@ public class Graphics {
     }
 
     public void translate(int x, int y) {
-        graphics2D.translate(x+globalX, y+globalY);
+        graphics2D.translate(x + globalX, y + globalY);
         translateX += x;
         translateY += y;
     }
@@ -91,6 +94,7 @@ public class Graphics {
     public void setColor(int RGB) {
         color = new Color(RGB);
     }
+
     public void setColor(Color RGB) {
         color = RGB;
     }
@@ -109,16 +113,19 @@ public class Graphics {
 
     public void setStrokeStyle(int style) throws IllegalArgumentException {
         switch (style) {
-            case SOLID -> {
+            case SOLID: {
                 graphics2D.setStroke(new BasicStroke());
                 selectedStroke = SOLID;
+                break;
             }
-            case DOTTED -> {
-                var stroke = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[] { 1 }, 0);
+            case DOTTED: {
+                BasicStroke stroke = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{1}, 0);
                 graphics2D.setStroke(stroke);
                 selectedStroke = DOTTED;
+                break;
             }
-            default -> throw new IllegalArgumentException();
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
@@ -205,23 +212,21 @@ public class Graphics {
             throw new NullPointerException();
         }
 
-        var canvas = new java.awt.Canvas();
+        java.awt.Canvas canvas = new java.awt.Canvas();
         // Align X
         int stringWidth = canvas.getFontMetrics(meFont).stringWidth(str);
         if ((anchor & Graphics.RIGHT) != 0) {
             x -= stringWidth;
-        }
-        else if ((anchor & Graphics.HCENTER) != 0) {
+        } else if ((anchor & Graphics.HCENTER) != 0) {
             x -= stringWidth >> 1;
         }
 
         // Align Y
-        var metrics = canvas.getFontMetrics(meFont);
-        var stringSize = metrics.getStringBounds(str, canvas.getGraphics());
+        FontMetrics metrics = canvas.getFontMetrics(meFont);
+        Rectangle2D stringSize = metrics.getStringBounds(str, canvas.getGraphics());
         if ((anchor & Graphics.BOTTOM) != 0) {
             y -= (int) stringSize.getMaxY();
-        }
-        else if (anchor == 0 || (anchor & Graphics.TOP) != 0) {
+        } else if (anchor == 0 || (anchor & Graphics.TOP) != 0) {
             y += (int) (stringSize.getMaxY() + (canvas.getFontMetrics(meFont).getHeight() >> 1));
         }
 
@@ -283,8 +288,8 @@ public class Graphics {
 
     public void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3) {
         graphics2D.setColor(color);
-        int[] xPoints = new int[] { x1, x2, x3 };
-        int[] yPoints = new int[] { y1, y2, y3 };
+        int[] xPoints = new int[]{x1, x2, x3};
+        int[] yPoints = new int[]{y1, y2, y3};
         graphics2D.fillPolygon(xPoints, yPoints, 3);
     }
 
@@ -293,7 +298,7 @@ public class Graphics {
             throw new NullPointerException();
         }
         if (width > 0 && height > 0) {
-            var image = new BufferedImage(width, height, processAlpha ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
+            BufferedImage image = new BufferedImage(width, height, processAlpha ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
             image.setRGB(0, 0, width, height, rgbData, offset, scanlength);
             graphics2D.drawImage(image, x, y, null);
         }

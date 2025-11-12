@@ -1,16 +1,12 @@
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
-
-/*
- * Ну вы же понимаете, что код здесь только мой?
- * Well, you do understand that the code here is only mine?
- */
 
 /**
  * File: ImageUtil.java
@@ -85,8 +81,8 @@ public class ImageUtil {
         int height = flipDimensions ? originalImage.getWidth() : originalImage.getHeight();
         double theta = (Math.PI / 2) * rotateTimes;
 
-        var rotatedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        var graphics2D = rotatedImage.createGraphics();
+        BufferedImage rotatedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics2D = rotatedImage.createGraphics();
 
         if (flipDimensions) {
             int translate = (width - height) >> 1;
@@ -99,8 +95,8 @@ public class ImageUtil {
     }
 
     public static BufferedImage mirrorImageVertical(BufferedImage originalImage) {
-        var mirroredImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        var graphics2D = mirroredImage.createGraphics();
+        BufferedImage mirroredImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics2D = mirroredImage.createGraphics();
 
         graphics2D.translate(0, originalImage.getHeight());
         graphics2D.drawImage(originalImage, 0, 0, originalImage.getWidth(), -originalImage.getHeight(), null);
@@ -108,8 +104,8 @@ public class ImageUtil {
     }
 
     public static BufferedImage mirrorImageHorizontal(BufferedImage originalImage) {
-        var mirroredImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        var graphics2D = mirroredImage.createGraphics();
+        BufferedImage mirroredImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics2D = mirroredImage.createGraphics();
 
         graphics2D.translate(originalImage.getWidth(), 0);
         graphics2D.drawImage(originalImage, 0, 0, -originalImage.getWidth(), originalImage.getHeight(), null);
@@ -117,7 +113,7 @@ public class ImageUtil {
     }
 
     public static BufferedImage createCompatibleImage(int width, int height) {
-        var graphicsConfiguration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        GraphicsConfiguration graphicsConfiguration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         return graphicsConfiguration.createCompatibleImage(width, height);
     }
 }
